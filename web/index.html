@@ -1,0 +1,974 @@
+<html>
+    <head>
+
+        <meta charset="UTF-8">
+        <title>A Ilha dos Requisitos</title>
+        <link rel="stylesheet" href="css/fonts.css" />
+        <link rel="stylesheet" href="css/form.css" />
+        <link rel="stylesheet" href="css/map.css" />
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="js/jquery-ui.js"></script>
+        <script src="js/sprite.js"></script>
+        <script src="js/portuguese.js"></script>
+        <script src="js/english.js"></script>
+        <script src="js/translations.js"></script>
+        <script src="js/prologue.js"></script>
+        <script src="js/map_stage.js"></script>
+        <script src="js/timecontrol.js"></script>
+        <script src="js/challenge1.js"></script>
+        <script src="js/challenge2.js"></script>
+        <script src="js/challenge3.js"></script>
+        <script src="js/challenge4.js"></script>
+        <script src="js/challenge5.js"></script>
+        <script src="js/challenge6.js"></script>
+        <script src="js/challenge7.js"></script>
+        <script src="js/hint_manager.js"></script>
+        <script src="js/text_screen.js"></script>
+        <script src="js/game_over.js"></script>
+        <script src="js/player.js"></script>
+    </head>
+    <body style="background-color: #000;height: 100%;min-height: 100%;position:relative;/*background-image: url(images/background.png)*/">
+        <table id="slide" cellpadding="0" cellspacing="0"  style="background-color: #FFF;margin-left:20%;margin-right:20%;margin-top: -10px;    width:830px;min-height: inherit;height: inherit;" align="center">
+            <tr>
+                <td>
+                    <table align="center" width="750" id="language_panel">
+                        <tr>
+                            <td align="right">
+                                <img src="images/brasil_flag.png" style="width:30px;height:15px;cursor:pointer" onclick="changeToPortuguese()" />
+                                |
+                                <img src="images/britain_flag.png" style="width:30px;height:15px;cursor:pointer" onclick="changeToEnglish()" />                        
+                            </td>
+                        </tr>
+                        <tr style="display:none" id="info_panel">
+                            <td>
+                                <table width="100%">
+                                    <tr>
+                                        <td width="45%">
+                                            <span id="text_7" class="label"></span>: <span id="text_selected_area" class="fieldValue"></span>
+                                        </td>
+                                        <td align="center" width="45%">
+                                            <span id="text_154" class="label"></span>: <span id="text_player_name_panel" class="fieldValue"></span>
+                                        </td>
+                                        <td align="right" width="10%">
+                                            <span id="remaining_time_panel" style="color:#AAA;font-size: 12pt"></span>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" style="display:none" id="stage_map">
+                        <tr>            
+                            <td> 
+                                <span id="text_149" class="game_text"></span> 
+                            </td>
+                            <td style="text-align:right" class="game_text" >
+                                <span onclick="player.calculatePoints();
+                                gameOver.prepareForDisplay();
+            
+                                switchStage('stage_map', 'player_score')" class="mapLink" id="text_158">  </span>
+                                |
+                                <span onclick="switchStage('stage_map', 'stage_rules')"  class="mapLink" id="text_15" ></span>
+                                |
+                                <span onclick="$('#jacks_diary_p1').hide();
+                                $('#jacks_diary_p2').hide();
+                                if (challenge1.concludedTime > 0) {
+                                    $('#jacks_diary_p2').show()
+                                } else {
+                                    $('#jacks_diary_p1').show()
+                                }
+                                ;
+                                switchStage('stage_map', 'jacks_diary')"  class="mapLink" id="text_159">  </span>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td width="750" colspan="2">
+                                <div style="position:relative;height: 550px;min-height: 550px;" >
+                                    <canvas id="main_canvas" style="display:none;position:absolute;z-index: 1" width="750" height="500"></canvas>                 
+                                    <canvas id="jack_canvas" style="position:absolute;z-index: 3"  width="750" height="500"></canvas> 
+                                    <div id="map_selected_area" style="display:none;position:absolute; margin-top: 370px; margin-left: 505px;border:1px solid black;padding: 2px;z-index: 10">
+                                        <img src="" id="img_selected_area" style="width:180px;height:80px;cursor:pointer" onclick="openArea()" />
+                                    </div>
+                                    <span id="text_9" style="display:none;position:absolute; margin-top: 50px; margin-left: 30px" class="map_area"></span>
+                                    <span id="text_1" style="display:none;position:absolute; margin-top: 205px; margin-left: 160px" class="map_area"></span>
+                                    <span id="text_2" style="display:none;position:absolute; margin-top: 312px; margin-left: 340px" class="map_area"></span>
+                                    <span id="text_3" style="display:none;position:absolute; margin-top: 245px; margin-left: 520px" class="map_area"></span>
+                                    <span id="text_4" style="display:none;position:absolute; margin-top: 330px; margin-left: 459px" class="map_area"></span>
+                                    <span id="text_5" style="display:none;position:absolute; margin-top: 225px; margin-left: 359px" class="map_area"></span>
+                                    <span id="text_6" style="display:none;position:absolute; margin-top: 105px; margin-left: 410px" class="map_area"></span>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+                    
+                    <table align="center" width="750" id="stage_main_menu" >
+                        <tr>
+                            <td align="center">
+                                <img src="images/logo.png" />
+                                <br /><br />
+                                <br />
+                                <a href="#" style="text-decoration: none;"  onclick="startGame();" id="game_start_panel"><span style="font-size:22pt;text-align:center" class="label" id="text_0">Game Start</span></a>               
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="game_text" align="center">
+                                <br />
+                                <p align="center">
+                                    <span id="text_144" class="game_text"></span><br />
+                                    Marcello Thiry - <span id="text_146" ></span> |
+                                    Rafael Queiroz Gonçalves - <span id="text_145" ></span> |
+                                    Bruno Cesar Queiroz Gonçalves - <span id="text_147"></span>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_prologue" style="display:none">
+                        <tr>
+                            <td align="center">
+                                <table  cellpadding="5">
+                                    <tr>
+                                        <td>
+                                            <span id="text_11" class="game_text"></span><br />
+                                            <img src="images/prologue_1.png" width="300" height="150" />
+                                        </td>
+                                        <td align="right">
+                                            <span id="text_12" class="game_text"></span><br />
+                                            <img src="images/prologue_2.png" width="200" height="200" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span id="text_13" class="game_text"></span><br />
+                                            <img src="images/prologue_3.png" width="250" height="200"/>
+                                        </td>
+                                        <td>
+                                            <span id="text_14" class="game_text"></span><br />
+                                            <img src="images/prologue_4.png" width="300" height="150" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" align="right">
+                                            <span onclick="switchStage('stage_prologue', 'stage_rules')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_rules" style="display:none">
+                        <tr>
+                            <td align="center">
+                                <img src="images/logo_mini.png"  />
+                            <td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br /><br />
+                                <span id="text_15" class="label"></span>
+                                <br /><br />
+                                <span id="text_16" class="game_text"></span>
+                                <p align="right">
+                                    <span onclick="switchStage('stage_rules', player.name === '' ? 'stage_player_data' : 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                    </table>
+                    <form name="player_data" id="player_data" method="post">
+                    <table align="center" width="750" id="stage_player_data"  style="display:none">
+                        <tr>
+                            <td align="center">
+                                <img src="images/logo_mini.png"  />
+                            <td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">
+                                <br />
+                                <span id="text_148" class="label" align="center"></span>
+                                <br /><br />
+                                <table align="center" width="750" border="0" cellpadding="5" class="game_text" >
+                                    <tr >
+                                        <td class="player_form_label"><span id="text_136"></span></td>
+                                        <td><input type="text" name="player_name" maxlength="35" style="width:80%" value="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="player_form_label"><span id="text_137"></span></td>
+                                        <td><input type="text" name="player_email" maxlength="40" style="width:80%"  value="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" >
+                                            <p align="center">
+                                                <span id="text_138"></span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="player_form_label"><span id="text_139"></span></td>
+                                        <td><input type="text" name="player_institution" maxlength="40" style="width:80%" value=""  /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="player_form_label"><span id="text_140"></span></td>
+                                        <td>
+                                            <input type="text" name="player_program" maxlength="40" style="width:80%"  value=""  />
+                                            <br /><span id="text_141"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="player_form_label"><span id="text_142"></span></td>
+                                        <td>
+                                            <input type="text" name="player_course" maxlength="40" style="width:80%" value="" />
+                                            <br /><span id="text_143"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p align="right">
+                                    <span onclick="if (player.readUserData()) {
+                                        player.savePlayerData();
+                                        $('#info_panel').show();
+                                        timeManager.isTimeFrozen = false;
+                                        switchStage('stage_player_data', 'stage_map');
+                                    }" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p> 
+                            </td>
+                        </tr>
+                    </table>
+                    </form>
+                    <table align="center" width="750" id="stage_airplane" style="display:none">
+                        <tr>
+                            <td>
+                                <img src="images/airplane_area.png" class="area_image" />
+                                <br /><br />
+                                <span id="text_39" class="game_text"></span>
+                                <br />
+                                <span id="text_40" class="game_text" style="color:#F00"></span>
+                                <br/>
+                                <p align="right">
+                                    <span onclick="switchStage('stage_airplane', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table align="center" width="750" id="jacks_diary" style="display:none">
+                        <tr id="jacks_diary_p1" style="display:none">
+                            <td align="center">
+                                <img src="images/blank_diary.jpg" class="concept_art" />
+                                <br /><br />
+                                <span id="text_160" class="game_text"></span>
+
+                                <p align="right">
+                                    <span onclick="switchStage('jacks_diary', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                        <tr id="jacks_diary_p2" style="display:none">
+                            <td align="center">
+                                <img src="images/concept_art_jack.png" class="concept_art" />
+                                <br /><br />
+                                <span id="text_161" class="game_text"></span>
+
+                                <p align="right">
+                                    <span onclick="$('#jacks_diary_p2').hide();
+                                    $('#jacks_diary_p3').show();"style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                        <tr id="jacks_diary_p3" style="display:none">
+                            <td align="center">
+                                <img src="images/concept_art_ubbap_nerd.png" class="concept_art" />
+                                <br /><br />
+                                <span id="text_162" class="game_text"></span>
+
+                                <p align="right">
+                                    <span onclick="$('#jacks_diary_p3').hide();
+                                    $('#jacks_diary_p4').show();" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                        <tr id="jacks_diary_p4" style="display:none">
+                            <td align="center">
+                                <img src="images/concept_art_nerd.png" class="concept_art" />
+                                <br /><br />
+                                <span id="text_163" class="game_text"></span>
+
+                                <p align="right">
+                                    <span onclick="$('#jacks_diary_p4').hide();switchStage('jacks_diary', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_holy_stone" style="display:none">
+                        <tr id="stage_holy_stone_c1">
+                            <td>
+                                <img src="images/holy_stone_area.png" class="area_image" />
+                                <br /><br/>
+                                <span id="text_41" class="game_text"></span>
+                                <br/>
+                                <p align="right">
+                                    <span onclick="switchStage('stage_holy_stone', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                        <tr id="stage_holy_stone_c2" style="display:none">
+                            <td>
+                                <table cellpadding="10">
+                                    <tr>
+                                        <td style="vertical-align: top;width:200px" class="game_text">
+                                            <span id="text_23" ></span>: <span id="tries_c2">0</span>
+                                            <br /><br />
+                                            <span id="text_26"></span>: <span id="hints_c2" class="game_text"></span>                            
+                                            <br /><br /> 
+                                            <span class="label" id="text_30"></span>
+                                            <br />
+                                            <span onclick="hintManager.showHint(language[62], 'hint_c2', 'hint_c2_a')" style="cursor:pointer" id="hint_c2_a" name="hint_a"></span> 
+                                            | 
+                                            <span   onclick="hintManager.showHint(language[63], 'hint_c2', 'hint_c2_b')" style="cursor:pointer" id="hint_c2_b" name="hint_b"></span>
+                                            <br />
+                                            <span id="hint_c2" style="height: 150px;max-height: 110px;" class="game_text"></span>                          
+                                            <br /><br />
+
+                                            <img src="images/holy_stone_area.png" style="width:300px;" />
+                                        </td>
+                                        <td  class="game_text" style="vertical-align: top">
+                                            <span class="label" id="text_49" class="game_text"></span>
+                                            <br /><br />
+                                            <input type="checkbox" id="c2_a1" /><span id="text_51" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a2" /><span id="text_52" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a3" /><span id="text_53" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a4" /><span id="text_54" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a5" /><span id="text_55" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a6" /><span id="text_56" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a7" /><span id="text_57" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a8" /><span id="text_58" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c2_a9" /><span id="text_59" class="game_text"></span><br /><br />
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="game_text" style="font-weight: bold">
+                                            <br />
+                                            <<  <span id="text_164" onclick="switchStage('stage_holy_stone', 'stage_map')" style="cursor:pointer" ></span>
+
+                                        </td>
+                                        <td class="game_text" style="text-align: right">
+                                            <span id="challenge_2_msgs"></span><br />
+                                            <span id="text_50" onclick="challenge2.verifyAnswer()" style="cursor:pointer" class="evaluate"></span>  
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_vulcano"  style="display:none">
+                        <tr id="stage_vulcano_c1">
+                            <td>
+                                <img src="images/vulcano_area.png" class="area_image" />
+                                <br /><br/>
+                                <span id="text_43" class="game_text"></span>
+                                <br/>
+                                <p align="right">
+                                    <span onclick="switchStage('stage_vulcano', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                        <tr id="stage_vulcano_c2" style="display:none">
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td style="vertical-align: top;width: 200px" class="game_text">
+                                            <span id="text_23" ></span>: <span id="tries_c3">0</span>
+                                            <br /><br />
+                                            <span id="text_26"></span>: <span id="hints_c3" class="game_text"></span>
+                                            <br /><br />
+                                            <span class="label" id="text_30"></span>
+                                            <br />
+                                            <span onclick="hintManager.showHint(language[80], 'hint_c3', 'hint_c3_a')" style="cursor:pointer" id="hint_c3_a" name="hint_a"></span> 
+                                            | 
+                                            <span   onclick="hintManager.showHint(language[81], 'hint_c3', 'hint_c3_b')" style="cursor:pointer" id="hint_c3_b" name="hint_b"></span>
+                                            <br />
+                                            <span id="hint_c3" style="height: 150px;max-height: 110px;" class="game_text"></span>                          
+
+                                            <br /><br /><br /><br />
+                                            <img src="images/vulcano_area.png" style="width:300px;height:250px;" />
+                                        </td>
+                                        <td width="18">&nbsp;</td>
+                                        <td  class="game_text" style="vertical-align: top;" >
+                                            <span class="label" id="text_67"></span>
+                                            <br /><br />
+                                            <input type="checkbox" id="c3_a1" /><span id="text_68" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a2" /><span id="text_69" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a3" /><span id="text_70" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a4" /><span id="text_71" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a5" /><span id="text_72" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a6" /><span id="text_73" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a7" /><span id="text_74" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a8" /><span id="text_75" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a9" /><span id="text_76" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a10" /><span id="text_77" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c3_a11" /><span id="text_78" class="game_text"></span><br /><br />
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="game_text" style="font-weight: bold" colspan="2">
+                                            <br />
+                                            <<  <span id="text_164" onclick="switchStage('stage_vulcano', 'stage_map')" style="cursor:pointer" ></span>
+
+                                        </td>
+                                        <td class="game_text" style="text-align: right">
+                                            <span id="challenge_3_msgs"></span><br />
+                                            <span id="text_79" onclick="challenge3.verifyAnswer()" style="cursor:pointer" class="evaluate"></span>  
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table align="center" width="750" id="stage_geek_village" style="display:none">
+                        <tr id="stage_geek_village_c1">
+                            <td>
+                                <img src="images/geek_tribe_area.png" class="area_image" />
+                                <br /><br/>
+                                <span id="text_44" class="game_text"></span>
+                                <br/>
+                                <p align="right">
+                                    <span onclick="switchStage('stage_geek_village', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table align="center" width="750" id="stage_beach" style="display:none">
+                        <tr id="stage_beach_c1">
+                            <td>
+                                <img src="images/beach_area.png" class="area_image" />
+                                <br /><br/>
+                                <span id="text_42" class="game_text"></span>
+                                <br/><br/>
+                                <span id="text_101" class="game_text" style="display:none;color:#F00"></span>
+                                <br />
+                                <p align="right">
+                                    <span onclick="switchStage('stage_beach', 'stage_map')" style="cursor:pointer" class="continueIcon"> <span id="text_165"> </span> >> </span>
+                                </p>    
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750"  id="stage_challenge_5" style="display:none">
+                        <tr >
+                            <td>
+                                <table cellpadding="15">
+                                    <tr>
+                                        <td style="vertical-align: top; width:200px" class="game_text">
+                                            <span id="text_23" ></span>: <span id="tries_c5">0</span>
+                                            <br /><br />
+                                            <span id="text_26"></span>: <span id="hints_c5" class="game_text"></span>
+                                            <br /><br />
+                                            <span class="label" id="text_30"></span>
+                                            <br /> 
+
+                                            <span onclick="hintManager.showHint(language[102], 'hint_c5', 'hint_c5_a')" style="cursor:pointer" id="hint_c5_a" name="hint_a"></span> 
+                                            | 
+                                            <span   onclick="hintManager.showHint(language[103], 'hint_c5', 'hint_c5_b')" style="cursor:pointer" id="hint_c5_b" name="hint_b"></span>
+                                            <br />
+                                            <span id="hint_c5" style="height: 150px;max-height: 110px;" class="game_text"></span>
+                                            <br /><br />
+                                            <img src="images/nerds_trible_area.png" style="width:300px;max-height:400px" />
+
+
+                                        </td>
+                                        <td  class="game_text" style="vertical-align: top">
+                                            <div id="c5_part_1">
+                                                <span class="label" id="text_104"></span>
+                                                <br />
+                                                <br />
+                                                <input type="checkbox" id="c5_a1" /><span id="text_105" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a2" /><span id="text_106" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a3" /><span id="text_107" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a4" /><span id="text_108" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a5" /><span id="text_109" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a6" /><span id="text_110" class="game_text"></span><br /><br />
+
+                                            </div>
+                                            <div id="c5_part_2" style="display:none">
+                                                <span class="label" id="text_111"></span>
+                                                <br />
+                                                <br />
+                                                <input type="checkbox" id="c5_a7" /><span id="text_112" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a8" /><span id="text_113" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a9" /><span id="text_114" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a10" /><span id="text_115" class="game_text"></span><br /><br />
+                                                <input type="checkbox" id="c5_a11" /><span id="text_116" class="game_text"></span><br /><br />
+
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="game_text" style="font-weight: bold">
+                                            <br />
+                                            <<  <span id="text_164" onclick="switchStage('stage_challenge_5', 'stage_map')" style="cursor:pointer" ></span>
+
+                                        </td>
+                                        <td class="game_text" style="text-align: right">
+                                            <span id="challenge_5_msgs"></span><br />
+                                            <span id="text_79" class="evaluate" style="cursor: pointer" onclick="if ($('#c5_part_1').css('display') == 'block') {
+                                                challenge5.verifyAnswerPart1();
+                                            } else {
+                                                challenge5.verifyAnswerPart2()
+                                            }"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+   
+                    <table align="center" width="750" id="generic_text_screen_for_challenge" style="display:none">
+                        <tr>
+                            <td align="center">
+                                <img src="images/logo_mini.png"   />
+                                <br /><br />
+                            <td>
+                        </tr>
+                        <tr>
+                            <td class="game_text" style="line-height: 20px">
+                                <span id="text_34" style="display:none"></span>
+                                <span id="text_35" style="display:none"></span>
+                                <span id="text_36" style="display:none"></span>
+                                <span id="text_37" style="display:none"></span>
+                                <span id="text_47" style="display:none"></span>
+                                <span id="text_48" style="display:none"></span>
+                                <span id="text_60" style="display:none"></span>
+                                <span id="text_61" style="display:none"></span>
+                                <span id="text_65" style="display:none"></span>
+                                <span id="text_66" style="display:none"></span>
+                                <span id="text_82" style="display:none"></span>
+                                <span id="text_83" style="display:none"></span>
+                                <span id="text_86" style="display:none"></span>
+                                <span id="text_87" style="display:none"></span>
+                                <span id="text_99" style="display:none"></span>
+                                <span id="text_100" style="display:none"></span>
+                                <span id="text_117" style="display:none"></span>
+                                <span id="text_118" style="display:none"></span>
+                                <span id="text_119" style="display:none"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <br /><br />
+                                <span class="continueIcon" onclick="textScreen.showNext()" style="cursor: pointer"> <span id="text_165"> </span> >> </span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_challenge_1" style="display:none">
+                        <tr>
+                            <td></td>
+                            <td class="game_text">
+                                <span id="text_27"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:200px" class="game_text">
+                                <span id="text_23" ></span>: <span id="tries_c1"></span>
+                                <br /><br />
+                                <span id="text_26"></span>: <span id="hints_c1" class="game_text"></span>
+                                <br /><br />
+                                <span class="label" id="text_30"></span>
+                                <br /> 
+
+                                <span onclick="hintManager.showHint(language[31], 'hint_c1', 'hint_c1_a')" style="cursor:pointer" id="hint_c1_a" name="hint_a"></span> 
+                                | 
+                                <span onclick="hintManager.showHint(language[32], 'hint_c1', 'hint_c1_b')" style="cursor:pointer" id="hint_c1_b" name="hint_b"></span>
+                                <br />
+                                <div id="hint_c1" style="height: 150px;max-height: 150px;"></div>
+                                <br/>
+                                <img src="images/challenge_1/cooker.png" width="200" />
+                                <br /><br />
+
+                            </td>
+                            <td style="width:550px;vertical-align: top">
+
+                                <div style="position:relative;height: 300px">
+                                    <div id="draggable_c1_1"  class="dragable_box" style="position:absolute; margin-top: 50px; margin-left: 10px" onclick="challenge1.handleDoubleClick(this)"> 
+                                        <img src="images/challenge_1/rune_1_especification.png" width="75" height="90" />
+                                        <br /><span id="text_17" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c1_5" class="dragable_box" style="position:absolute; margin-top: 180px; margin-left: 100px" onclick="challenge1.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_5_validation.png" width="75" height="90" />
+                                        <br /><span id="text_21" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c1_2" class="dragable_box" style="position:absolute; margin-top: 50px; margin-left: 200px" onclick="challenge1.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_2_analysis.png" width="75" height="90" />
+                                        <br /><span id="text_18" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c1_6" class="dragable_box" style="position:absolute; margin-top: 180px; margin-left: 300px" onclick="challenge1.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_6_management.png" width="75" height="90" />      
+                                        <br /><span id="text_22" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c1_3" class="dragable_box" style="position:absolute; margin-top: 50px; margin-left: 400px" onclick="challenge1.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_3_elicitation.png" width="75" height="90" />
+                                        <br /><span id="text_19" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c1_4" class="dragable_box" style="position:absolute; margin-top: 180px; margin-left: 500px" onclick="challenge1.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_4_verification.png" width="75" height="90"  />
+                                        <br /><span id="text_20" class="game_text"></span>
+                                    </div>                   
+                                </div>
+
+                                <div style="position:relative;height: 200px">
+                                    <div id="droppable_c1_1" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 10px"></div>
+                                    <div id="droppable_c1_2" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 100px"></div>
+                                    <div id="droppable_c1_3" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 200px"></div>
+                                    <div id="droppable_c1_4" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 300px"></div>
+                                    <div id="droppable_c1_5" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 400px"></div>
+                                    <div id="droppable_c1_6" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 500px"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="game_text" style="font-weight: bold">
+                                <br />
+                                <<  <span id="text_164" onclick="switchStage('stage_challenge_1', 'stage_map')" style="cursor:pointer" ></span>
+
+                            </td>
+                            <td class="game_text" style="text-align: right">
+                                <span id="challenge_1_msgs"></span><br />
+                                <span id="text_25" onclick="challenge1.tryAgainChallenge1()" style="cursor:pointer" class="try_again"></span>
+                                |
+                                <span id="text_24" onclick="challenge1.analizeChallenge1()" style="cursor:pointer" class="evaluate"></span>  
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_challenge_4" style="display:none">
+                        <tr>
+                            <td style="width:200px" class="game_text">
+                                <br />
+                                <span id="text_23" ></span>: <span id="tries_c4"></span>
+                                <br /><br />
+                                <span id="text_26"></span>: <span id="hints_c4" class="game_text"></span>
+                                <br /><br />
+                                <span class="label" id="text_30"></span>
+                                <br /> 
+
+                                <span onclick="hintManager.showHint(language[84], 'hint_c4', 'hint_c4_a')" style="cursor:pointer" id="hint_c4_a" name="hint_a"></span> 
+                                | 
+                                <span onclick="hintManager.showHint(language[85], 'hint_c4', 'hint_c4_b')" style="cursor:pointer" id="hint_c4_b" name="hint_b"></span>
+                                <br />
+                                <div id="hint_c4" style="height: 80px;max-height: 80px;"></div>
+                                <br/>
+                                <img src="images/holy_stone_area.png" style="width:300px;" />
+                            </td>
+                            <td style="width:480px;vertical-align: top" class="game_text">
+                                <span id="text_88" class="label"></span><br /><br />
+                                <div style="position:relative;height: 400px;width: 480px;" id="draggable_area_c4">
+                                    <div id="draggable_c4_1"  class="dragable_box_c4" style="position:absolute;" > 
+                                        <span id="text_89" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_2"  class="dragable_box_c4" style="position:absolute;" > 
+                                        <span id="text_90" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_3"  class="dragable_box_c4" style="position:absolute;"> 
+                                        <span id="text_91" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_4"  class="dragable_box_c4" style="position:absolute;" > 
+                                        <span id="text_92" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_5"  class="dragable_box_c4" style="position:absolute;" > 
+                                        <span id="text_93" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_6"  class="dragable_box_c4" style="position:absolute;"> 
+                                        <span id="text_94" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_7"  class="dragable_box_c4" style="position:absolute;"> 
+                                        <span id="text_95" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c4_8"  class="dragable_box_c4" style="position:absolute;"> 
+                                        <span id="text_96" class="game_text"></span>
+                                    </div>
+
+
+                                    <div id="droppable_c4_1" class="droppable_box_c4" style="position:absolute;">
+                                        <br /><span id="text_97" class="game_text"></span>
+                                    </div>
+
+
+                                    <div id="droppable_c4_2" class="droppable_box_c4" style="position:absolute;">
+                                        <br /><span id="text_98" class="game_text"></span>
+                                    </div>
+                                </div>
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="game_text" style="font-weight: bold">
+                                <br />
+                                <<  <span id="text_164" onclick="switchStage('stage_challenge_4', 'stage_map')" style="cursor:pointer" ></span>
+
+                            </td>
+                            <td class="game_text" style="text-align: right">
+                                <span id="challenge_4_msgs"></span><br />                 
+                                <span id="text_25" onclick="challenge4.tryAgain()" style="cursor:pointer" class="try_again"></span>
+                                |
+                                <span id="text_24" onclick="challenge4.verifyAnswer()" style="cursor:pointer" class="evaluate"></span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750" id="stage_challenge_6" style="display:none">
+                        <tr>
+                            <td style="width:200px" class="game_text">
+                                <span id="text_23" ></span>: <span id="tries_c6">0</span>
+                                <br /><br />
+                                <span id="text_26"></span>: <span id="hints_c6" class="game_text"></span>
+                                <br /><br />
+                                <span class="label" id="text_30"></span>
+                                <br /> 
+
+                                <span onclick="hintManager.showHint(language[120], 'hint_c6', 'hint_c6_a')" style="cursor:pointer" id="hint_c6_a" name="hint_a"></span> 
+                                <br />
+                                <div id="hint_c6" style="height: 80px;max-height: 80px;"></div>
+                                <br/>
+                                <img src="images/geek_tribe_area.png" width="200" />
+                            </td>
+                            <td style="width:550px;vertical-align: top">
+                                <span id="text_121" class="label game_text"></span>
+                                <div style="position:relative;height: 300px">
+                                    <div id="draggable_c6_1"  class="dragable_box" style="position:absolute; margin-top: 50px; margin-left: 10px" onclick="challenge6.handleDoubleClick(this)"> 
+                                        <img src="images/challenge_1/rune_1_especification.png" width="75" height="90" />
+                                        <br /><span id="text_122" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c6_2" class="dragable_box" style="position:absolute; margin-top: 180px; margin-left: 100px" onclick="challenge6.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_5_validation.png" width="75" height="90" />
+                                        <br /><span id="text_123" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c6_3" class="dragable_box" style="position:absolute; margin-top: 50px; margin-left: 200px" onclick="challenge6.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_2_analysis.png" width="75" height="90" />
+                                        <br /><span id="text_124" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c6_4" class="dragable_box" style="position:absolute; margin-top: 50px; margin-left: 400px" onclick="challenge6.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_3_elicitation.png" width="75" height="90" />
+                                        <br /><span id="text_125" class="game_text"></span>
+                                    </div>
+                                    <div id="draggable_c6_5" class="dragable_box" style="position:absolute; margin-top: 180px; margin-left: 300px" onclick="challenge6.handleDoubleClick(this)">
+                                        <img src="images/challenge_1/rune_4_verification.png" width="75" height="90"  />
+                                        <br /><span id="text_126" class="game_text"></span>
+                                    </div>                   
+                                </div>
+
+                                <div style="position:relative;height: 200px">
+                                    <div id="droppable_c6_1" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 10px"></div>
+                                    <div id="droppable_c6_2" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 100px"></div>
+                                    <div id="droppable_c6_3" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 200px"></div>
+                                    <div id="droppable_c6_4" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 300px"></div>
+                                    <div id="droppable_c6_5" class="droppable_box" style="position:absolute; margin-top: 50px; margin-left: 400px"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="game_text" style="font-weight: bold">
+                                <br />
+                                <<  <span id="text_164" onclick="switchStage('stage_challenge_6', 'stage_map')" style="cursor:pointer" ></span>
+
+                            </td>
+                            <td class="game_text" style="text-align: right">
+                                <span id="challenge_6_msgs"></span><br />    
+                                <span id="text_25" onclick="challenge6.tryAgainChallenge6()" style="cursor:pointer" class="try_again"></span>
+                                |
+                                <span id="text_24" onclick="challenge6.analizeChallenge6()" style="cursor:pointer" class="evaluate"></span>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table align="center" width="750"  id="stage_challenge_7" style="display:none">
+                        <tr >
+                            <td colspan="2">
+                                <table cellpadding="15">
+                                    <tr>
+                                        <td style="vertical-align: top; width:200px" class="game_text">
+                                            <span id="text_23" ></span>: <span id="tries_c7">0</span>
+                                            <br />
+                                            <span id="text_26"></span>: <span id="hints_c7" class="game_text"></span>
+                                            <br /><br />
+                                            <span class="label" id="text_30"></span>
+                                            <br /> 
+                                            <span onclick="hintManager.showHint(language[128], 'hint_c7', 'hint_c7_a')" style="cursor:pointer" id="hint_c7_a" name="hint_a"></span> 
+                                            <br />
+                                            <span id="hint_c7" style="height: 150px;max-height: 110px;" class="game_text"></span>                          
+                                            <br /><br />
+                                            <img src="images/beach_area.png" style="width:300px; height:200px" />
+
+                                        </td>
+                                        <td  class="game_text" style="vertical-align: top">
+                                            <span class="label" id="text_127"></span>
+                                            <br />
+                                            <br />
+                                            <input type="checkbox" id="c7_a1" /><span id="text_129" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c7_a2" /><span id="text_130" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c7_a3" /><span id="text_131" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c7_a4" /><span id="text_132" class="game_text"></span><br /><br />
+                                            <input type="checkbox" id="c7_a5" /><span id="text_133" class="game_text"></span><br /><br />
+                                        </td>
+
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="game_text" style="font-weight: bold">
+                                <br />
+                                <<  <span id="text_164" onclick="switchStage('stage_challenge_7', 'stage_map')" style="cursor:pointer" ></span>
+
+                            </td>
+                            <td class="game_text" style="text-align: right">
+                                <span id="challenge_7_msgs"></span><br />
+                                <span id="text_79" onclick="challenge7.verifyAnswer()" style="cursor:pointer" class="evaluate"></span>  
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750"  id="game_over" style="display:none">
+                        <tr >
+                            <td class="game_text">
+                                <div id="game_fail" style="display:none">
+                                    <img src='images/gameover.bmp' align='center'  style="width:600px" /><br/>
+                                    <br />
+                                    <span id="text_134" class="game_text" ></span>
+                                </div>
+
+                                <div id="game_success" style="display:none">
+                                    <img src='images/fuga-ilha.bmp' align='center' style="width:600px" /><br/>
+                                    <br />
+                                    <br />
+                                    <span id="text_135" class="game_text" ></span>
+                                </div>
+                                <br />
+                                Ranking:
+                                <div id="ranking" class="game_text">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table align="center" width="750"  id="player_score" style="display:none">
+                        <tr >
+                            <td class="game_text">        
+                                <br /><br />
+                                <b><span id="text_154" class="game_text" ></span>:</b><span id="go_player_name"></span> <br />
+                                <b><span id="text_155" class="game_text" ></span>:</b><span id="go_remaining_hints"></span> <br />
+                                <b><span id="text_156" class="game_text" ></span>:</b><span id="go_points"></span> <br />
+                                <br />
+                                <table border='1' width='750'>
+                                    <tr>
+                                        <td>
+                                            <span id="text_153" class="game_text"></span>
+                                        </td>
+                                        <td>
+                                            <span id="text_150" class="game_text"></span>
+                                        </td>
+                                        <td>
+                                            <span id="text_151" class="game_text"></span>
+                                        </td>
+                                        <td>
+                                            <span id="text_152" class="game_text"></span>
+                                        </td>
+                                    </tr>
+                                    <tr><td><span id="text_153" class="game_text"></span> 1</td><td><span id="c1_time_begin" class="game_text"></span></td><td><span id="c1_time_end" class="game_text"></span></td><td><span id="c1_tries_go" class="game_text"></span></td></tr>
+                                    <tr><td class="game_text"><span id="text_153" class="game_text"></span> 2</td><td><span id="c2_time_begin" class="game_text"></span></td><td><span id="c2_time_end" class="game_text"></span></td><td><span id="c2_tries_go" class="game_text"></span></td></tr>
+                                    <tr><td class="game_text"><span id="text_153" class="game_text"></span> 3</td><td><span id="c3_time_begin" class="game_text"></span></td><td><span id="c3_time_end" class="game_text"></span></td><td><span id="c3_tries_go" class="game_text"></span></td></tr>
+                                    <tr><td class="game_text"><span id="text_153" class="game_text"></span> 4</td><td><span id="c4_time_begin" class="game_text"></span></td><td><span id="c4_time_end" class="game_text"></span></td><td><span id="c4_tries_go" class="game_text"></span></td></tr>
+                                    <tr><td class="game_text"><span id="text_153" class="game_text"></span> 5</td><td><span id="c5_time_begin" class="game_text"></span></td><td><span id="c5_time_end" class="game_text"></span></td><td><span id="c5_tries_go" class="game_text"></span></td></tr>
+                                    <tr><td class="game_text"><span id="text_153" class="game_text"></span> 6</td><td><span id="c6_time_begin" class="game_text"></span></td><td><span id="c6_time_end" class="game_text"></span></td><td><span id="c6_tries_go" class="game_text"></span></td></tr>
+                                    <tr><td class="game_text"><span id="text_153" class="game_text"></span> 7</td><td><span id="c7_time_begin" class="game_text"></span></td><td><span id="c7_time_end" class="game_text"></span></td><td><span id="c7_tries_go" class="game_text"></span></td></tr>
+                                </table>
+                                * <span id="text_157" class="game_text" ></span>
+
+                                <br /><br />
+                               
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <span  id="go_return_map" class="continueIcon" style="cursor: pointer" onclick="switchStage('player_score', 'stage_map')"> <span id="text_165"> </span> >> </span>          
+                            </td>
+                        </tr>
+                    </table> 
+               </td>
+            </tr>
+            <tr>
+                <td  class="footer game_text" style="text-align:center; ">
+                    
+                    <span id="text_9" class="game_text" style="text-transform: uppercase;"></span>
+                    <br />
+                    2010, 2017
+    
+                </td>
+            </tr>
+        </table>
+
+        <script>
+            //initiate global variables
+            var timeManager = new TimeManager();
+            var gameOver = new GameOver();
+            gameOver.showRanking();
+            var player = new Player();
+            var canvas = document.getElementById("main_canvas");
+            var context = canvas.getContext("2d");
+            var mapAreas = new Array();
+            drawMapAreas();//call this function just to initialize the mapAreas array
+            var selectedArea = mapAreas[2];//selectedArea in map
+            var jackSprite;
+            changeToPortuguese();//Default Language
+            var hintManager = new HintManager();
+            hintManager.updateHintsAvailable();
+            var challenge1 = new Challenge1();
+            challenge1.initializeChallenge1();
+            var challenge2 = new Challenge2();
+            var challenge3 = new Challenge3();
+            var challenge4 = new Challenge4();
+            challenge4.initialize();
+            var challenge5 = new Challenge5();
+            var challenge6 = new Challenge6();
+            var challenge7 = new Challenge7();
+            challenge7.initialize();
+            var textScreen = new TextScreen();
+
+
+
+            //all challenge objects are included in the challenges array
+            var challenges = new Array();
+            challenges[0] = challenge1;
+            challenges[1] = challenge2;
+            challenges[2] = challenge3;
+            challenges[3] = challenge4;
+            challenges[4] = challenge5;
+            challenges[5] = challenge6;
+            challenges[6] = challenge7;
+            
+        </script>
+        
+     
+    </body>
+</html>

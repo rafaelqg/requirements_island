@@ -1,0 +1,44 @@
+@font-face {
+    font-family: matisse;
+    src: url(Matisse_ITC.ttf);
+}
+
+@font-face {
+    font-family: typewriter;
+    src: url(typewriter_1942.ttf);
+}
+
+body, span, td, div{
+    font-family: matisse;
+    color:#333;
+    font-size: 16pt;
+}
+
+.game_text{
+    /*font-family: typewriter;*/
+    font-family:"Times New Roman", Times, serif;
+    font-size: 11pt;
+    text-align: left;
+}
+
+.player_form_label{
+    text-align: right !important;
+    font-weight: bold;
+}
+
+.game_text span, div{
+    /*font-family: typewriter;*/
+    font-family: inherit;
+    font-size: inherit;
+    max-width: inherit;
+    text-align: inherit;
+}
+
+.game_text tr td{
+    /*font-family: typewriter;*/
+    vertical-align: top;
+    font-family: inherit;
+    font-size: inherit;
+    max-width: inherit;
+    text-align: inherit;
+}

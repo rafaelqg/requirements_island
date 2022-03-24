@@ -1,0 +1,95 @@
+.label{
+    color:darkred !important;
+    font-weight: bold;
+}
+
+.try_again{
+    color:darkred;
+    font-weight: bold;
+}
+
+.evaluate{
+    color:darkblue;
+    font-weight: bold;
+}
+
+.fieldValue{
+    color:darkblue;
+}
+
+.mapLink{
+    color:darkblue;
+}
+
+.mapLink:hover{
+    color:darkred;
+    cursor:pointer;
+}
+
+.continueIcon{
+    font-size: inherit;
+    color: inherit;
+}
+
+
+.dragable_box { 
+    width: 75px; 
+    height: 95px;
+    cursor: pointer;
+    /*line-height: 50px;*/
+    margin: 5px;
+    z-index: 10;
+    text-align: center;
+}
+
+.droppable_box { 
+    width: 75px; 
+    height: 90px;  
+    margin: 5px;
+    z-index: 5;
+    border:1px dashed #000; 
+    background-color: #CCC;
+}
+
+.dragable_box_c4 {
+    width:95px; 
+    height: 105px;  
+    cursor: move;
+    opacity:1;
+    /*line-height: 50px;*/
+    border: solid 1px #000;
+    margin: 5px;
+    z-index: 10;
+    text-align: center;
+    background-color: lightblue;
+}
+
+.droppable_box_c4 { 
+    vertical-align: middle;
+    text-align: center;
+    width: 95px; 
+    height: 90px;  
+    margin: 5px;
+    z-index: 5;
+    border:1px dashed #000; 
+    background-color: lightsteelblue;
+}
+
+
+div, table{
+    background-color: #FFF;
+}
+
+
+.footer {
+    background-color: #404040;
+    color: #FFF;
+    height: 50px;
+    padding: 15px;
+    border:0px solid #000;
+    
+}
+
+.footer span{
+    color: #FFF;
+}
